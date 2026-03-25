@@ -5,12 +5,13 @@ const { Resend } = require("resend");
 
 const app = express();
 
-const requiredEnvVars = [
-  "RESEND_API_KEY",
-  "RECEIVER_EMAIL",
-  "FRONTEND_URL",
-  "PORT",
-];
+const isVercelRuntime = process.env.VERCEL === "1";
+
+const requiredEnvVars = ["RESEND_API_KEY", "RECEIVER_EMAIL", "FRONTEND_URL"];
+
+if (!isVercelRuntime) {
+  requiredEnvVars.push("PORT");
+}
 const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
 
 if (missingEnvVars.length > 0) {
@@ -99,9 +100,8 @@ app.get("/health", (req, res) => {
   res.status(200).json({ success: true, status: "ok" });
 });
 
-const PORT = Number(process.env.PORT);
-
-if (process.env.VERCEL !== "1") {
+if (!isVercelRuntime) {
+  const PORT = Number(process.env.PORT);
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
