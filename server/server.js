@@ -8,7 +8,6 @@ const app = express();
 const requiredEnvVars = [
   "RESEND_API_KEY",
   "RECEIVER_EMAIL",
-  "SENDER_EMAIL",
   "FRONTEND_URL",
   "PORT",
 ];
@@ -66,7 +65,7 @@ app.post("/send-email", async (req, res) => {
 
   try {
     const response = await resend.emails.send({
-      from: process.env.SENDER_EMAIL,
+      from: process.env.SENDER_EMAIL || "Portfolio <onboarding@resend.dev>",
       to: process.env.RECEIVER_EMAIL,
       subject: `New message from ${name}`,
       html: `
