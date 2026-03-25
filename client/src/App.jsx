@@ -158,6 +158,8 @@ const projectItems = [
 
 function App() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' })
   const [typedIntro, setTypedIntro] = useState('')
   const [typedRole, setTypedRole] = useState('')
   const [isPricingPaused, setIsPricingPaused] = useState(false)
@@ -203,12 +205,38 @@ function App() {
     [],
   )
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    // Simulate submission with a console log and an alert.
-    console.log('Contact form submitted', form)
-    alert('Thanks! Your message has been sent.')
-    setForm({ name: '', email: '', message: '' })
+    setIsSubmitting(true)
+    setSubmitMessage({ type: '', text: '' })
+
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+    const endpoint = import.meta.env.VITE_CONTACT_ENDPOINT || '/send-email'
+    const apiUrl = `${baseUrl}${endpoint}`
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to send message')
+      }
+
+      setSubmitMessage({ type: 'success', text: 'Thanks! Your message has been sent.' })
+      setForm({ name: '', email: '', message: '' })
+    } catch (error) {
+      setSubmitMessage({
+        type: 'error',
+        text: error.message || 'Unable to send your message right now. Please try again.',
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const scrollToWork = () => {
@@ -535,11 +563,22 @@ function App() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
+              disabled={isSubmitting}
               className="mt-2 inline-flex w-fit items-center gap-2 rounded-full border border-violet-300/40 bg-gradient-to-r from-violet-600 to-cyan-500 px-7 py-3 text-sm font-medium text-white"
             >
-              Send Message
+              {isSubmitting ? 'Sending...' : 'Send Message'}
               <FaArrowRight />
             </motion.button>
+
+            {submitMessage.text ? (
+              <p
+                className={`text-sm ${
+                  submitMessage.type === 'success' ? 'text-emerald-300' : 'text-rose-300'
+                }`}
+              >
+                {submitMessage.text}
+              </p>
+            ) : null}
           </form>
         </motion.div>
       </section>

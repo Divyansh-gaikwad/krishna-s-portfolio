@@ -5,31 +5,67 @@ const { Resend } = require("resend");
 
 const app = express();
 
-// ✅ Initialize Resend
+const requiredEnvVars = [
+  "RESEND_API_KEY",
+  "RECEIVER_EMAIL",
+  "SENDER_EMAIL",
+  "FRONTEND_URL",
+  "PORT",
+];
+const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
+
+if (missingEnvVars.length > 0) {
+  console.error(`Missing required env vars: ${missingEnvVars.join(", ")}`);
+  process.exit(1);
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ✅ Middlewares
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error("CORS blocked for this origin"));
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+};
+
 app.use(express.json());
-app.use(cors({
-  origin: process.env.FRONTEND_URL // your frontend URL
-}));
+app.use(cors(corsOptions));
 
-// ✅ Route
+const sanitize = (value = "") => String(value).trim();
+
 app.post("/send-email", async (req, res) => {
-  const { name, email, message } = req.body;
+  const name = sanitize(req.body?.name);
+  const email = sanitize(req.body?.email);
+  const message = sanitize(req.body?.message);
 
-  // 🔒 Basic validation
   if (!name || !email || !message) {
     return res.status(400).json({
       success: false,
-      message: "All fields are required"
+      message: "All fields are required",
+    });
+  }
+
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide a valid email address",
     });
   }
 
   try {
     const response = await resend.emails.send({
-      from: "Portfolio <onboarding@resend.dev>", // test sender
-      to: process.env.RECEIVER_EMAIL, // where you receive emails
+      from: process.env.SENDER_EMAIL,
+      to: process.env.RECEIVER_EMAIL,
       subject: `New message from ${name}`,
       html: `
         <h2>New Contact Form Message</h2>
@@ -42,26 +78,27 @@ app.post("/send-email", async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Email sent successfully!",
-      data: response
+      data: response,
     });
-
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email:", error?.message || error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to send email"
+      message: "Failed to send email",
     });
   }
 });
 
-// ✅ Health check route (optional but useful)
 app.get("/", (req, res) => {
   res.send("Server is running 🚀");
 });
 
-// ✅ Start server
-const PORT = process.env.PORT || 5000;
+app.get("/health", (req, res) => {
+  res.status(200).json({ success: true, status: "ok" });
+});
+
+const PORT = Number(process.env.PORT);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
