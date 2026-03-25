@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #05050b;
+  color: #e8eaf2;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(124, 58, 237, 0.45);
+  color: #f8fafc;
+}
+
+.hero-grid {
+  background-image: linear-gradient(140deg, #05050b 0%, #080912 55%, #0b0d16 100%);
+}
+
+main::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.16;
+}
+
+@media (max-width: 768px) {
+  main::before {
+    opacity: 0.1;
+  }
+}
+
+@keyframes pricingMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.pricing-marquee-track {
+  animation: pricingMarquee 42s linear infinite;
+  will-change: transform;
+}
+
+.pricing-marquee-paused {
+  animation-play-state: paused;
+}
