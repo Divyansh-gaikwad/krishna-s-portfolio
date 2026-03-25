@@ -21,14 +21,16 @@ if (missingEnvVars.length > 0) {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const normalizeOrigin = (origin = "") => origin.trim().replace(/\/+$/, "");
+
 const allowedOrigins = (process.env.FRONTEND_URL || "")
   .split(",")
-  .map((origin) => origin.trim())
+  .map((origin) => normalizeOrigin(origin))
   .filter(Boolean);
 
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
       callback(null, true);
       return;
     }
@@ -100,6 +102,10 @@ app.get("/health", (req, res) => {
 
 const PORT = Number(process.env.PORT);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
