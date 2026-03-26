@@ -498,10 +498,11 @@ function App() {
           </p>
         </motion.div>
 
-        <div className="relative overflow-x-auto overflow-y-visible py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:overflow-x-hidden">
-          <div className="flex w-max gap-6 py-2 sm:pricing-marquee-track sm:py-2">
+        {/* Mobile: manual horizontal scroll */}
+        <div className="relative overflow-x-auto overflow-y-visible py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:hidden">
+          <div className="flex w-max gap-6 py-2">
             {pricingPlans.map((plan) => (
-              <div key={plan.name} className="w-[320px] sm:w-[360px]">
+              <div key={plan.name} className="w-[320px]">
                 <motion.div
                   whileHover={{ y: -8, scale: 1.01 }}
                   transition={{ duration: 0.25 }}
@@ -557,69 +558,73 @@ function App() {
                 </motion.div>
               </div>
             ))}
+          </div>
+        </div>
 
-            <div className={`hidden sm:flex w-max gap-6 py-2 ${isPricingPaused ? 'pricing-marquee-paused' : ''}`}
-              onMouseEnter={() => setIsPricingPaused(true)}
-              onMouseLeave={() => setIsPricingPaused(false)}
-            >
-              {[...pricingPlans, ...pricingPlans].map((plan, index) => (
-                <div key={`${plan.name}-${index}`} className="w-[360px]">
-                  <motion.div
-                    whileHover={{ y: -8, scale: 1.01 }}
-                    transition={{ duration: 0.25 }}
-                    className={`relative flex h-full flex-col rounded-3xl border p-5 backdrop-blur-2xl ${plan.popular ? 'border-violet-300/50 bg-violet-500/15 shadow-[0_0_40px_rgba(124,58,237,0.35)]' : 'border-white/10 bg-white/[0.03] hover:border-cyan-200/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.18)]'}`}
+        {/* Desktop/Tablet: right-to-left marquee carousel with pause on hover */}
+        <div
+          className="relative hidden overflow-x-hidden overflow-y-visible py-3 sm:block"
+          onMouseEnter={() => setIsPricingPaused(true)}
+          onMouseLeave={() => setIsPricingPaused(false)}
+        >
+          <div className={`pricing-marquee-track flex w-max gap-6 py-2 ${isPricingPaused ? 'pricing-marquee-paused' : ''}`}>
+            {[...pricingPlans, ...pricingPlans].map((plan, index) => (
+              <div key={`${plan.name}-${index}`} className="w-[360px]">
+                <motion.div
+                  whileHover={{ y: -8, scale: 1.01 }}
+                  transition={{ duration: 0.25 }}
+                  className={`relative flex h-full flex-col rounded-3xl border p-5 backdrop-blur-2xl ${plan.popular ? 'border-violet-300/50 bg-violet-500/15 shadow-[0_0_40px_rgba(124,58,237,0.35)]' : 'border-white/10 bg-white/[0.03] hover:border-cyan-200/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.18)]'}`}
+                >
+                  {plan.popular && (
+                    <span className="absolute -top-3 left-6 rounded-full border border-violet-300/50 bg-violet-500/90 px-3 py-1 text-xs tracking-wider text-white">
+                      MOST POPULAR
+                    </span>
+                  )}
+
+                  <div className="relative mb-4 h-24 overflow-hidden rounded-2xl border border-white/10">
+                    <img
+                      src={plan.cover}
+                      alt={`${plan.name} preview`}
+                      className="h-full w-full object-cover opacity-70"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,4,12,0.08)_0%,rgba(2,4,12,0.72)_100%)]" />
+                    <div className={`absolute inset-0 bg-gradient-to-r ${plan.accent}`} />
+                    <div className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-black/35 text-cyan-100">
+                      <plan.icon className="text-sm" />
+                    </div>
+                  </div>
+
+                  <h3 className="min-h-[48px] text-xl font-semibold leading-tight text-white">
+                    {plan.name}
+                  </h3>
+
+                  <div className="mt-2 grid min-h-[74px] grid-cols-[1fr_auto] items-end gap-3">
+                    <p className="whitespace-nowrap text-4xl font-bold leading-none text-cyan-200">
+                      {plan.price}
+                    </p>
+                    <p className="max-w-[110px] text-sm leading-snug text-slate-300">{plan.note}</p>
+                  </div>
+
+                  <ul className="mt-5 min-h-[160px] space-y-2.5 text-sm text-slate-200">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex gap-2">
+                        <span className="mt-1 h-2 w-2 rounded-full bg-violet-300" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    type="button"
+                    onClick={scrollToContact}
+                    className="mt-6 w-full rounded-xl border border-cyan-300/35 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-50 transition hover:bg-cyan-500/25"
                   >
-                    {plan.popular && (
-                      <span className="absolute -top-3 left-6 rounded-full border border-violet-300/50 bg-violet-500/90 px-3 py-1 text-xs tracking-wider text-white">
-                        MOST POPULAR
-                      </span>
-                    )}
-
-                    <div className="relative mb-4 h-24 overflow-hidden rounded-2xl border border-white/10">
-                      <img
-                        src={plan.cover}
-                        alt={`${plan.name} preview`}
-                        className="h-full w-full object-cover opacity-70"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,4,12,0.08)_0%,rgba(2,4,12,0.72)_100%)]" />
-                      <div className={`absolute inset-0 bg-gradient-to-r ${plan.accent}`} />
-                      <div className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-black/35 text-cyan-100">
-                        <plan.icon className="text-sm" />
-                      </div>
-                    </div>
-
-                    <h3 className="min-h-[48px] text-xl font-semibold leading-tight text-white">
-                      {plan.name}
-                    </h3>
-
-                    <div className="mt-2 grid min-h-[74px] grid-cols-[1fr_auto] items-end gap-3">
-                      <p className="whitespace-nowrap text-4xl font-bold leading-none text-cyan-200">
-                        {plan.price}
-                      </p>
-                      <p className="max-w-[110px] text-sm leading-snug text-slate-300">{plan.note}</p>
-                    </div>
-
-                    <ul className="mt-5 min-h-[160px] space-y-2.5 text-sm text-slate-200">
-                      {plan.features.map((feature) => (
-                        <li key={feature} className="flex gap-2">
-                          <span className="mt-1 h-2 w-2 rounded-full bg-violet-300" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <button
-                      type="button"
-                      onClick={scrollToContact}
-                      className="mt-6 w-full rounded-xl border border-cyan-300/35 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-50 transition hover:bg-cyan-500/25"
-                    >
-                      Book Service
-                    </button>
-                  </motion.div>
-                </div>
-              ))}
-            </div>
+                    Book Service
+                  </button>
+                </motion.div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
