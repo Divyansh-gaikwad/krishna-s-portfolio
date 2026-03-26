@@ -8,6 +8,8 @@ import {
   FaYoutube,
   FaBehance,
   FaArrowRight,
+  FaBars,
+  FaTimes,
   FaHeart,
   FaMagic,
   FaVideo,
@@ -163,9 +165,10 @@ function App() {
   const [typedIntro, setTypedIntro] = useState('')
   const [typedRole, setTypedRole] = useState('')
   const [isPricingPaused, setIsPricingPaused] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    const introText = "Hey, I'm Krishna Kavde"
+    const introText = "Hey, I'm\nKrishna Kavde"
     const roleText = 'Creative\nEditor'
     let introIndex = 0
     let roleIndex = 0
@@ -247,6 +250,13 @@ function App() {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const handleMobileNavClick = (targetId) => {
+    setIsMobileMenuOpen(false)
+    requestAnimationFrame(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' })
+    })
+  }
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#05050B] text-slate-100">
       <section className="relative min-h-screen p-0">
@@ -260,6 +270,52 @@ function App() {
 
           <div className="relative z-30 flex items-center justify-between px-6 pb-3 pt-6 sm:px-9">
             <p className="invisible font-['Poppins'] text-lg font-medium text-white">Krishna Kavde</p>
+
+            <div className="relative md:hidden">
+              <button
+                type="button"
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMobileMenuOpen}
+                onClick={() => setIsMobileMenuOpen((current) => !current)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/90 backdrop-blur-xl transition hover:bg-white/[0.1]"
+              >
+                {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+              </button>
+
+              {isMobileMenuOpen && (
+                <div className="absolute right-0 top-12 z-50 w-52 overflow-hidden rounded-2xl border border-white/10 bg-[#05050B]/90 p-2 text-sm text-slate-100 shadow-[0_24px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                  <button
+                    type="button"
+                    onClick={() => handleMobileNavClick('experience')}
+                    className="w-full rounded-xl px-3 py-2 text-left transition hover:bg-white/[0.06]"
+                  >
+                    Experience
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMobileNavClick('projects')}
+                    className="w-full rounded-xl px-3 py-2 text-left transition hover:bg-white/[0.06]"
+                  >
+                    Projects
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMobileNavClick('pricing')}
+                    className="w-full rounded-xl px-3 py-2 text-left transition hover:bg-white/[0.06]"
+                  >
+                    Pricing
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMobileNavClick('contact')}
+                    className="w-full rounded-xl px-3 py-2 text-left transition hover:bg-white/[0.06]"
+                  >
+                    Contact
+                  </button>
+                </div>
+              )}
+            </div>
+
             <div className="hidden items-center gap-14 font-['Poppins'] text-base font-normal tracking-wide text-slate-100/90 md:flex">
               <a href="#" className="transition duration-200 hover:text-cyan-200">
                 Home
@@ -283,29 +339,28 @@ function App() {
           </div>
 
           <div className="relative z-20 grid flex-1 grid-rows-[1fr_auto]">
-            <div className="relative grid items-center px-6 pb-8 pt-2 sm:px-9 lg:grid-cols-[1.2fr_0.9fr]">
+            <div className="relative grid items-center px-6 pb-8 pt-2 -translate-y-10 sm:translate-y-0 sm:px-9 lg:grid-cols-[1.2fr_0.9fr]">
               <img
                 src={heroPortrait}
                 alt="Hero portrait"
-                className="pointer-events-none absolute bottom-0 left-[27%] z-10 h-[92%] w-[42%] scale-[1.45] object-contain object-center opacity-90 mix-blend-normal brightness-90 contrast-85 saturate-[0.86] blur-[0.4px] drop-shadow-[0_0_36px_rgba(5,5,11,0.95)] max-lg:hidden"
+                className="pointer-events-none absolute bottom-56 left-[64%] z-10 h-[88%] w-[86%] -translate-x-1/2 scale-[1.06] object-contain object-center opacity-90 mix-blend-normal brightness-90 contrast-85 saturate-[0.86] blur-[0.4px] drop-shadow-[0_0_36px_rgba(5,5,11,0.95)] sm:bottom-0 sm:left-1/2 sm:h-[92%] sm:w-[58%] sm:scale-[1.2] sm:translate-x-[-42%] lg:bottom-0 lg:left-[27%] lg:h-[92%] lg:w-[42%] lg:scale-[1.45] lg:translate-x-0"
               />
 
-              <div className="relative z-20 -translate-y-[24px]">
-                <p className="text-3xl font-semibold text-slate-100 sm:text-4xl">
+              <div className="relative z-20 translate-y-[4px] sm:-translate-y-[24px]">
+                <p className="whitespace-pre-line text-2xl font-semibold text-slate-100 sm:text-4xl">
                   {typedIntro}
                   <span className="ml-1 inline-block animate-pulse text-cyan-200">|</span>
                 </p>
-                <h1 className="mt-2 whitespace-pre-line font-['Poppins'] text-6xl font-semibold leading-[0.9] text-white sm:text-7xl xl:text-8xl">
+                <h1 className="mt-2 whitespace-pre-line font-['Poppins'] text-5xl font-semibold leading-[0.9] text-white sm:text-7xl xl:text-8xl">
                   {typedRole}
                   <span className="ml-1 inline-block animate-pulse text-violet-200">|</span>
                 </h1>
-                <p className="mt-6 max-w-md text-base text-slate-200/95 sm:text-lg">
-                  I create premium reels, wedding stories, and cinematic edits
-                  that feel effortless and unforgettable.
+                <p className="mt-5 max-w-md whitespace-pre-line text-sm text-slate-200/95 sm:mt-6 sm:whitespace-normal sm:text-lg">
+                  {"I create premium reels,\nwedding stories,\nand cinematic edits\nthat feel effortless\nand unforgettable."}
                 </p>
               </div>
 
-              <div className="relative z-20 mt-4 max-w-lg -translate-y-[30px] justify-self-end p-1 text-left lg:-translate-x-4 xl:-translate-x-8">
+              <div className="relative z-20 mt-0 max-w-lg -translate-y-[64px] justify-self-end p-1 text-left sm:mt-4 sm:-translate-y-[30px] lg:-translate-x-4 xl:-translate-x-8">
                 <p className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-200/80">
                   Post-Production Philosophy
                 </p>
@@ -323,21 +378,21 @@ function App() {
               </div>
             </div>
 
-            <div className="absolute inset-x-0 bottom-16 z-30 flex items-start justify-between gap-6 px-6 text-[0.72rem] font-medium tracking-[0.02em] text-slate-200/88 sm:px-9 sm:text-xs md:text-sm">
-              <p className="flex min-w-[128px] flex-col leading-tight">
-                <span className="mb-1 text-[0.9rem] font-semibold leading-none text-[#00F5FF] drop-shadow-[0_0_8px_rgba(0,245,255,0.55)] sm:text-[1rem]">#01</span>
+            <div className="absolute inset-x-0 bottom-16 z-30 grid grid-cols-2 gap-x-8 gap-y-6 px-6 text-[0.72rem] font-medium tracking-[0.02em] text-slate-200/88 sm:px-9 sm:text-xs md:flex md:items-start md:justify-between md:gap-6">
+              <p className="flex min-w-0 flex-col leading-tight md:min-w-[128px]">
+                <span className="mb-1 inline-flex w-fit items-center rounded-full border border-[#00F5FF]/35 bg-[#00F5FF]/10 px-2.5 py-0.5 text-[0.85rem] font-semibold leading-none text-[#00F5FF] drop-shadow-[0_0_8px_rgba(0,245,255,0.35)] sm:text-[0.95rem]">#01</span>
                 <span className="text-[0.8rem] sm:text-sm">Reel Editing</span>
               </p>
-              <p className="flex min-w-[128px] flex-col leading-tight">
-                <span className="mb-1 text-[0.9rem] font-semibold leading-none text-[#FFD60A] drop-shadow-[0_0_8px_rgba(255,214,10,0.5)] sm:text-[1rem]">#02</span>
+              <p className="flex min-w-0 flex-col leading-tight md:min-w-[128px]">
+                <span className="mb-1 inline-flex w-fit items-center rounded-full border border-[#FFD60A]/35 bg-[#FFD60A]/10 px-2.5 py-0.5 text-[0.85rem] font-semibold leading-none text-[#FFD60A] drop-shadow-[0_0_8px_rgba(255,214,10,0.32)] sm:text-[0.95rem]">#02</span>
                 <span className="text-[0.8rem] sm:text-sm">Wedding Highlights</span>
               </p>
-              <p className="flex min-w-[128px] flex-col leading-tight">
-                <span className="mb-1 text-[0.9rem] font-semibold leading-none text-[#FF8A00] drop-shadow-[0_0_8px_rgba(255,138,0,0.5)] sm:text-[1rem]">#03</span>
+              <p className="flex min-w-0 flex-col leading-tight md:min-w-[128px]">
+                <span className="mb-1 inline-flex w-fit items-center rounded-full border border-[#FF8A00]/35 bg-[#FF8A00]/10 px-2.5 py-0.5 text-[0.85rem] font-semibold leading-none text-[#FF8A00] drop-shadow-[0_0_8px_rgba(255,138,0,0.32)] sm:text-[0.95rem]">#03</span>
                 <span className="text-[0.8rem] sm:text-sm">YouTube Video Edits</span>
               </p>
-              <p className="flex min-w-[128px] flex-col leading-tight">
-                <span className="mb-1 text-[0.9rem] font-semibold leading-none text-[#7CFF3A] drop-shadow-[0_0_8px_rgba(124,255,58,0.5)] sm:text-[1rem]">#04</span>
+              <p className="flex min-w-0 flex-col leading-tight md:min-w-[128px]">
+                <span className="mb-1 inline-flex w-fit items-center rounded-full border border-[#7CFF3A]/35 bg-[#7CFF3A]/10 px-2.5 py-0.5 text-[0.85rem] font-semibold leading-none text-[#7CFF3A] drop-shadow-[0_0_8px_rgba(124,255,58,0.3)] sm:text-[0.95rem]">#04</span>
                 <span className="text-[0.8rem] sm:text-sm">Brand Promo Films</span>
               </p>
             </div>
@@ -412,7 +467,7 @@ function App() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.7 }}
-          className="mt-20"
+          className="mt-14 sm:mt-20"
         >
           <h3 className="font-['Poppins'] text-3xl font-semibold text-white sm:text-4xl">
             Projects I&apos;ve Worked Upon
@@ -427,7 +482,7 @@ function App() {
         </motion.div>
       </section>
 
-      <section id="pricing" className="mx-auto max-w-7xl px-6 py-24 sm:px-10">
+      <section id="pricing" className="mx-auto max-w-7xl px-6 py-16 sm:px-10 sm:py-24">
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -443,16 +498,10 @@ function App() {
           </p>
         </motion.div>
 
-        <div
-          className="relative overflow-x-hidden overflow-y-visible py-3"
-          onMouseEnter={() => setIsPricingPaused(true)}
-          onMouseLeave={() => setIsPricingPaused(false)}
-        >
-          <div
-            className={`pricing-marquee-track flex w-max gap-6 py-2 ${isPricingPaused ? 'pricing-marquee-paused' : ''}`}
-          >
-            {[...pricingPlans, ...pricingPlans].map((plan, index) => (
-              <div key={`${plan.name}-${index}`} className="w-[320px] sm:w-[360px]">
+        <div className="relative overflow-x-auto overflow-y-visible py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:overflow-x-hidden">
+          <div className="flex w-max gap-6 py-2 sm:pricing-marquee-track sm:py-2">
+            {pricingPlans.map((plan) => (
+              <div key={plan.name} className="w-[320px] sm:w-[360px]">
                 <motion.div
                   whileHover={{ y: -8, scale: 1.01 }}
                   transition={{ duration: 0.25 }}
@@ -508,6 +557,69 @@ function App() {
                 </motion.div>
               </div>
             ))}
+
+            <div className={`hidden sm:flex w-max gap-6 py-2 ${isPricingPaused ? 'pricing-marquee-paused' : ''}`}
+              onMouseEnter={() => setIsPricingPaused(true)}
+              onMouseLeave={() => setIsPricingPaused(false)}
+            >
+              {[...pricingPlans, ...pricingPlans].map((plan, index) => (
+                <div key={`${plan.name}-${index}`} className="w-[360px]">
+                  <motion.div
+                    whileHover={{ y: -8, scale: 1.01 }}
+                    transition={{ duration: 0.25 }}
+                    className={`relative flex h-full flex-col rounded-3xl border p-5 backdrop-blur-2xl ${plan.popular ? 'border-violet-300/50 bg-violet-500/15 shadow-[0_0_40px_rgba(124,58,237,0.35)]' : 'border-white/10 bg-white/[0.03] hover:border-cyan-200/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.18)]'}`}
+                  >
+                    {plan.popular && (
+                      <span className="absolute -top-3 left-6 rounded-full border border-violet-300/50 bg-violet-500/90 px-3 py-1 text-xs tracking-wider text-white">
+                        MOST POPULAR
+                      </span>
+                    )}
+
+                    <div className="relative mb-4 h-24 overflow-hidden rounded-2xl border border-white/10">
+                      <img
+                        src={plan.cover}
+                        alt={`${plan.name} preview`}
+                        className="h-full w-full object-cover opacity-70"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,4,12,0.08)_0%,rgba(2,4,12,0.72)_100%)]" />
+                      <div className={`absolute inset-0 bg-gradient-to-r ${plan.accent}`} />
+                      <div className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-black/35 text-cyan-100">
+                        <plan.icon className="text-sm" />
+                      </div>
+                    </div>
+
+                    <h3 className="min-h-[48px] text-xl font-semibold leading-tight text-white">
+                      {plan.name}
+                    </h3>
+
+                    <div className="mt-2 grid min-h-[74px] grid-cols-[1fr_auto] items-end gap-3">
+                      <p className="whitespace-nowrap text-4xl font-bold leading-none text-cyan-200">
+                        {plan.price}
+                      </p>
+                      <p className="max-w-[110px] text-sm leading-snug text-slate-300">{plan.note}</p>
+                    </div>
+
+                    <ul className="mt-5 min-h-[160px] space-y-2.5 text-sm text-slate-200">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex gap-2">
+                          <span className="mt-1 h-2 w-2 rounded-full bg-violet-300" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <button
+                      type="button"
+                      onClick={scrollToContact}
+                      className="mt-6 w-full rounded-xl border border-cyan-300/35 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-50 transition hover:bg-cyan-500/25"
+                    >
+                      Book Service
+                    </button>
+                  </motion.div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
